@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link
+    rel="stylesheet"
+    href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+    crossorigin="anonymous"
+  >
+
+  <link
+  href="https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700&amp;subset=cyrillic"
+  rel="stylesheet">
+
+
+  <style>
+    body {
+      color: #23272B;
+      font-family: 'Ubuntu Mono', monospace;
+    }
+    .messages--container {
+      height: 70vh;
+      overflow-y: scroll;
+      overflow-x: auto;
+      background-color: #f4f7fa;
+    }
+    .messages {
+      padding-left: 2rem;
+      padding-top: 1rem;
+      list-style: none;
+    }
+    .messages li {
+      font-size: 12px;
+      line-height: 12px;
+      margin: 0;
+      padding: 0;
+    }
+    input.form-control:focus, .btn:focus, .btn:active {
+      outline: none;
+      box-shadow: none;
+    }
+    .input-group--container {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 80%
+    }
+  </style>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chatter App</title>
+</head>
+<body>
+
+  <div class="container-fluid">
+    <div class="messages--container">
+      <ul id="messages" class="messages"></ul>
+    </div>
+
+    <div class="input-group--container">
+      <div class="row">
+        <div class="col-lg-6">
+
+          <form class="p-2" action="">
+            <div class="input-group mb-3">
+              <input
+                id="m"
+                autocomplete="off"
+                type="text"
+                class="form-control form-control-sm"
+                placeholder="Message..."
+                aria-label="Message..."
+                aria-describedby="basic-addon2">
+              <div class="input-group-append">
+                <button class="btn btn-sm btn-outline-secondary" type="submit">Send</button>
+              </div>
+            </div>
+          </form>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script
+    src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+    integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+    crossorigin="anonymous">
+  </script>
+
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+    crossorigin="anonymous">
+  </script>
+
+  <script
+    src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+    integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+    crossorigin="anonymous">
+  </script>
+
+  <script src="/socket.io/socket.io.js"></script>
+
+  <script>
+
+
+    // BEGIN -----------------------------------------------
+
+    const room   = 'javascript';
+    const socket = io('/tech');
+    const $input = $('#m');
+
+    $('form').submit(() => {
+      let value = $input.val();
+      let msg = createMessage(value);
+
+      socket.emit('message', { msg, room });
+      $input.val('');
+      return false;
+    });
+
+    socket.on('connect', () => {
+      socket.emit('join', { room: room })
+    });
+
+    socket.on('message', (msg) => {
+      $('#messages').append($('<li>').text(msg));
+    });
+
+
+    // END ----------------------------------
+
+
+
+
+
+
+
+
+
+    function createMessage(value) {
+      let today = new Date();
+      let dd = today.getDate();
+      let mm = today.getMonth()+1;
+      let yy = today.getFullYear();
+      let hh = today.getHours();
+      let mi = today.getMinutes();
+      let ss = today.getSeconds();
+      let ms = today.getMilliseconds();
+      if (dd < 10) {
+        dd = '0' + dd;
+      }
+      if (mm < 10) {
+        mm = '0' + mm;
+      }
+      let day  = `${mm}/${dd}/${yy}`;
+      let time = `${hh}:${mi}:${ss},${ms}`;
+      return `${day} ${time}: ${value}`;
+    }
+
+  </script>
+
+
+</body>
+</html>
