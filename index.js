@@ -11,10 +11,20 @@ app.get('/', (req, res) => {
   res.sendFile(__dirname + '/public/index.html');
 });
 
-io.on('connection', (socket) => {
-  console.log('user connected');
-  socket.emit('message', { mannty: 'Whos own this world?' });
-  socket.on('another event', (data) => {
-    console.log(data);
+// Tech namespace
+const tech = io.of('/tech');
+
+tech.on('connection', (socket) => {
+
+  console.log('::user connected');
+
+  socket.on('message', (msg) => {
+    tech.emit('message', msg);
   });
+
+  socket.on('disconnect', () => {
+    console.log('::user disconnected');
+    tech.emit('message', 'user disconnected');
+  });
+
 });
