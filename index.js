@@ -1,3 +1,4 @@
+const express = require('express');
 const app = require('express')();
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
@@ -15,9 +16,18 @@ app.get('/javascript', (req, res) => {
   res.sendFile(__dirname + '/public/javascript.html');
 });
 
+app.get('/go', (req, res) => {
+  res.sendFile(__dirname + '/public/go.html');
+});
 
+app.get('/python', (req, res) => {
+  res.sendFile(__dirname + '/public/python.html');
+});
 
-// Tech namespace
+app.use(express.static('public'));
+
+// Tech namespace -------------------
+// socket.io stuff
 const tech = io.of('/tech');
 
 tech.on('connection', (socket) => {
